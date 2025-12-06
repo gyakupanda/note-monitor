@@ -11,36 +11,50 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # === DEBUG: Workdir 初期状態確認 ===
       - name: Debug - show workspace files
         run: |
-          echo "=== FILE LIST ==="
+          echo "=== FILE LIST (FIRST) ==="
           ls -R .
 
+      # === ワークスペースを完全クリーン ===
       - name: Clean workspace
         run: |
           git clean -fdx
           rm -rf ./*
 
+      # === 最新コードを再チェックアウト（キャッシュ破壊） ===
       - name: Checkout code again (fresh)
         uses: actions/checkout@v3
 
+      # === クリーン後のファイルチェック ===
       - name: Debug - show files after cleaning
         run: |
-          echo "=== FILE LIST AFTER CLEAN ==="
+          echo "=== FILE LIST (AFTER CLEAN) ==="
           ls -R .
 
+      # === NOTE_MONITOR.PY がどこにあるか検索 ===
+      - name: Debug - where is note_monitor.py?
+        run: |
+          echo "=== SEARCH note_monitor.py ==="
+          find . -name "note_monitor.py" -print
+
+      # === Python セットアップ ===
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
+      # === requirements インストール ===
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
 
+      # === サービスアカウントのJSON生成 ===
       - name: Create GOOGLE Service Account JSON
         run: echo "$GOOGLE_SERVICE_JSON" > service-account.json
 
+      # === NOTE_MONITOR.PY を実行（落ちてもログ確認可能） ===
       - name: Run monitor script
         run: |
           echo "=== RUNNING SCRIPT ==="
