@@ -1,4 +1,3 @@
-# force refresh
 from bs4 import BeautifulSoup
 from datetime import datetime
 import gspread
@@ -15,9 +14,6 @@ SHEET_KEY = "1ScTYN7whfVMqkLwfZiZPGwkRVg3iFRNV-ERJDpsk-po"
 LINE_TOKEN = os.getenv("LINE_TOKEN")  # GitHub Secretsから取得
 
 def check_bought_status(url):
-    """
-    Noteの記事に「購入済み」表示があるか判定（Selenium不要）
-    """
     headers = {"User-Agent": "Mozilla/5.0"}
     res = requests.get(url, headers=headers)
     soup = BeautifulSoup(res.text, "html.parser")
@@ -40,7 +36,6 @@ def send_line_notify(message):
     requests.post("https://notify-api.line.me/api/notify", headers=headers, data=data)
 
 def main():
-    # Google認証（ファイルはGitHub Secretsから生成）
     scope = [
         "https://spreadsheets.google.com/feeds",
         "https://www.googleapis.com/auth/drive"
