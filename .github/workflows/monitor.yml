@@ -6,10 +6,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  run:
+  run-monitor:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          clean: true   # ← キャッシュを強制無効化
 
       - name: Setup Python
         uses: actions/setup-python@v3
@@ -26,5 +28,35 @@ jobs:
       - name: Run note monitor
         env:
           LINE_TOKEN: ${{ secrets.LINE_TOKEN }}
+        run: python3 note_monitor.py
+name: monitor
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          clean: true   # ← キャッシュを強制無効化
+
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
         run: |
-          python3 note_monitor.py
+          pip install requests beautifulsoup4 gspread oauth2client
+
+      - name: Setup Google Auth File
+        run: echo "$GOOGLE_SERVICE_JSON" > service-account.json
+
+      - name: Run note monitor
+        env:
+          LINE_TOKEN: ${{ secrets.LINE_TOKEN }}
+        run: python3 note_monitor.py
