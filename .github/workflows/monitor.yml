@@ -11,10 +11,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Debug - show workspace files
+        run: |
+          echo "=== FILE LIST ==="
+          ls -R .
+
       - name: Clean workspace
         run: |
           git clean -fdx
           rm -rf ./*
+
+      - name: Checkout code again (fresh)
+        uses: actions/checkout@v3
+
+      - name: Debug - show files after cleaning
+        run: |
+          echo "=== FILE LIST AFTER CLEAN ==="
+          ls -R .
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -29,4 +42,6 @@ jobs:
         run: echo "$GOOGLE_SERVICE_JSON" > service-account.json
 
       - name: Run monitor script
-        run: python3 note_monitor.py
+        run: |
+          echo "=== RUNNING SCRIPT ==="
+          python3 note_monitor.py || true
