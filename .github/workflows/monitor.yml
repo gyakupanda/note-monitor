@@ -23,8 +23,8 @@ jobs:
       - name: Setup Google Auth File
         run: echo "$GOOGLE_SERVICE_JSON" > service-account.json
 
-      - name: Run Script
+      - name: Run note monitor
         env:
           LINE_TOKEN: ${{ secrets.LINE_TOKEN }}
         run: |
-          python3 ./note-monitor/note_monitor.py
+          python3 note_monitor.py
